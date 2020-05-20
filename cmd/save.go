@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -15,11 +15,13 @@ import (
 
 // pageParam is default XF2 param for number of page
 const pageParam = "page-"
+const defaultOutputFile = "result.json"
 
 // breakDuration is set in order to prevent DOS
 const breakDuration = 3
 
 var numberOfPage int
+var outputFile string
 
 // User is a post author
 type User struct {
@@ -50,6 +52,8 @@ var messages = []*Message{}
 
 func init() {
 	saveCmd.Flags().IntVarP(&numberOfPage, "pages", "p", 1, "number of page to fetch")
+	saveCmd.Flags().StringVarP(&outputFile, "output", "o", defaultOutputFile, "output file")
+
 	rootCmd.AddCommand(saveCmd)
 }
 
@@ -62,12 +66,20 @@ func mainProcess(url string) {
 			exactURL = getDocument(url + "/" + pageParam + strconv.Itoa(i))
 		}
 		parseHTML(exactURL)
-
 		time.Sleep(breakDuration * time.Second) // Prevent DOS
 	}
+	writeToFile()
+}
 
+func writeToFile() {
+	clientsFile, err := os.OpenFile(outputFile, os.O_RDWR|os.O_CREATE, os.ModePerm)
+	if err != nil {
+		panic(err)
+	}
+	defer clientsFile.Close()
 	str, _ := json.Marshal(messages)
-	fmt.Println(string(str))
+	clientsFile.Write(str)
+	log.Printf("Write successfully to file %s.\n", outputFile)
 }
 
 // parseHTML receives Document, then process and output data
@@ -121,6 +133,7 @@ func getDocument(url string) *goquery.Document {
 			log.Fatal(err)
 		}
 
+		log.Printf("GET %s successfully\n", url)
 		return doc
 	}
 
