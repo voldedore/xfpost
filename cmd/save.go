@@ -81,9 +81,10 @@ func parseHTML(doc *goquery.Document) {
 
 		message := &Message{Body: s.Find("article.message-body .bbWrapper").Text(),
 			CreatedBy: user}
-		messageTimeRaw, _ := s.Find(".message-attribution time").Attr("datetime")
+		messageTimeRaw, _ := s.Find(".message-attribution time").Attr("data-time")
 		messageTime, _ := strconv.ParseInt(messageTimeRaw, 0, 64)
-		message.Time = time.Unix(messageTime, messageTime)
+		fmt.Println(messageTime)
+		message.Time = time.Unix(messageTime, 0)
 
 		messagePermalink, _ := s.Find(".message-attribution a").Attr("href")
 		message.URL = messagePermalink
