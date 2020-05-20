@@ -41,7 +41,7 @@ type Message struct {
 var saveCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Save all posts of a thread",
-	Long:  `Usage: xfpost get https://xf-thread`,
+	Long:  `Usage: xfpost get https://xf.com/t/thread-url.123/`,
 	Run: func(cmd *cobra.Command, args []string) {
 		mainProcess(args[0])
 	},
