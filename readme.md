@@ -17,7 +17,7 @@ xfpost get https://xenforo.com/t/thread-url.123/
 Get from page 1 to page 5
 
 ```
-xfpost get https://xenforo.com/t/thread-url.123/ -p 5
+xfpost get https://xenforo.com/t/thread-url.123/ -f 1 -t 5
 ```
 
 Write to specific file

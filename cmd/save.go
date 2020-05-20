@@ -20,7 +20,8 @@ const defaultOutputFile = "result.json"
 // breakDuration is set in order to prevent DOS
 const breakDuration = 3
 
-var numberOfPage int
+var pageFrom int
+var pageTo int
 var outputFile string
 
 // User is a post author
@@ -51,14 +52,15 @@ var saveCmd = &cobra.Command{
 var messages = []*Message{}
 
 func init() {
-	saveCmd.Flags().IntVarP(&numberOfPage, "pages", "p", 1, "number of page to fetch")
+	saveCmd.Flags().IntVarP(&pageFrom, "from", "f", 1, "fetch from page")
+	saveCmd.Flags().IntVarP(&pageTo, "to", "t", 1, "fetch to page")
 	saveCmd.Flags().StringVarP(&outputFile, "output", "o", defaultOutputFile, "output file")
 
 	rootCmd.AddCommand(saveCmd)
 }
 
 func mainProcess(url string) {
-	for i := 1; i <= numberOfPage; i++ {
+	for i := pageFrom; i <= pageTo; i++ {
 		var exactURL *goquery.Document
 		if strings.LastIndex(url, "/")+1 == len(url) {
 			exactURL = getDocument(url + pageParam + strconv.Itoa(i))
